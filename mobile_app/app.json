@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "Regents AI",
+    "slug": "regent-ai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#050505"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.regentai.mobile",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Regents AI requires camera access to record training sessions for neural analysis.",
+        "NSPhotoLibraryUsageDescription": "Regents AI requires gallery access to upload training footage."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#050505"
+      },
+      "package": "com.regentai.mobile",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/logo.png",
+      "backgroundColor": "#050505"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Regents AI to access your photos for tactical analysis.",
+          "cameraPermission": "Allow Regents AI to capture live training sessions."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "regents-ai-mobile"
+      }
+    }
+  }
+}

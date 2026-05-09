@@ -1,0 +1,37 @@
+# Regents AI: Master Exclusion List
+
+# Dependencies
+node_modules/
+backend/.venv/
+ai_engine/.venv/
+bin/
+obj/
+
+# Mobile App
+mobile_app/.expo/
+mobile_app/node_modules/
+mobile_app/dist/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Environment & Secrets
+.env
+*.local
+mobile_app/.env
+backend/.env
+
+# Large Datasets (Keep these on Roboflow/Cloud Drive)
+ai_engine/datasets/
+raw_footage/
+runs/
+
+# Model Weights (Use Git LFS or Host Externally)
+*.pt
+*.onnx
+
+# System Files
+.DS_Store
+Thumbs.db
+*.log
