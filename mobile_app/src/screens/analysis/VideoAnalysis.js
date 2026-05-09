@@ -285,17 +285,17 @@ const VideoAnalysis = ({ navigation }) => {
 
               <View style={styles.shotBadge}>
                 <Text style={styles.shotLabel}>DETECTION: </Text>
-                <Text style={styles.shotName}>{result.metrics.detected_shot || "ACTION"}</Text>
+                <Text style={styles.shotName}>{result.shot_type || "ACTION"}</Text>
               </View>
 
               <View style={styles.metricsGrid}>
                 <View style={styles.metricBox}>
-                  <Text style={styles.metricValue}>{result.metrics.ball_speed_kph}</Text>
-                  <Text style={styles.metricLabel}>KPH</Text>
+                  <Text style={styles.metricValue}>{result.speed_kph}</Text>
+                  <Text style={styles.metricLabel}>{result.is_batting ? "EXIT VELOCITY" : "KPH"}</Text>
                 </View>
                 <View style={styles.metricBox}>
-                  <Text style={styles.metricValue}>{result.metrics.elbow_extension_angle}°</Text>
-                  <Text style={styles.metricLabel}>ELBOW</Text>
+                  <Text style={styles.metricValue}>{result.elbow_extension}°</Text>
+                  <Text style={styles.metricLabel}>{result.is_batting ? "ACTION ANGLE" : "ELBOW"}</Text>
                 </View>
               </View>
 
@@ -344,12 +344,12 @@ const VideoAnalysis = ({ navigation }) => {
 
               <View style={styles.modalStats}>
                 <GlassCard style={styles.miniStat}>
-                  <Text style={styles.miniStatVal}>{result?.metrics.ball_speed_kph} KPH</Text>
-                  <Text style={styles.miniStatLab}>VELOCITY</Text>
+                  <Text style={styles.miniStatVal}>{result?.speed_kph} {result?.is_batting ? 'KPH' : 'KPH'}</Text>
+                  <Text style={styles.miniStatLab}>{result?.is_batting ? 'EXIT VELOCITY' : 'VELOCITY'}</Text>
                 </GlassCard>
                 <GlassCard style={styles.miniStat}>
-                  <Text style={styles.miniStatVal}>{result?.metrics.elbow_extension_angle}°</Text>
-                  <Text style={styles.miniStatLab}>ANGLE</Text>
+                  <Text style={styles.miniStatVal}>{result?.elbow_extension}°</Text>
+                  <Text style={styles.miniStatLab}>{result?.is_batting ? 'ACTION ANGLE' : 'ANGLE'}</Text>
                 </GlassCard>
               </View>
             </View>

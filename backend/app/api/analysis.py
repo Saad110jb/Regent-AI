@@ -107,26 +107,41 @@ async def upload_training_session(
 
     # 4. Generate Professional Coaching Insights
     insights = []
+    is_batting = ai_results.get("is_batting", False)
     
-    # Biomechanics Logic
-    if elbow_angle > 15.0:
-        insights.append(f"CRITICAL: Elbow extension of {elbow_angle:.1f}° exceeds the ICC 15-degree limit. Highly recommend video review of the arm action.")
-    elif elbow_angle > 10.0:
-        insights.append(f"OBSERVATION: Slight arm bend detected ({elbow_angle:.1f}°). Action is legal, but monitor for fatigue-induced extension.")
-    else:
-        insights.append("EXCELLENT: High-arm action maintained within legal biomechanical limits.")
-        
-    # Velocity Logic
-    if ball_speed > 140.0:
-        insights.append(f"ELITE PACE: Consistent delivery at {ball_speed:.1f} KPH. Focus on maintaining landing stability at this intensity.")
-    elif ball_speed > 120.0:
-        insights.append(f"GOOD MOMENTUM: Solid medium-fast pace. To increase velocity, focus on earlier front-foot bracing.")
-    else:
-        insights.append(f"TECHNICAL FOCUS: Current pace is {ball_speed:.1f} KPH. Work on shoulder rotation and follow-through to generate more zip.")
+    # ROLE: BOWLING INSIGHTS (Only if NOT batting)
+    if not is_batting:
+        # Biomechanics Logic (Bowling Only)
+        if elbow_angle > 15.0:
+            insights.append(f"CRITICAL: Elbow extension of {elbow_angle:.1f}° exceeds the ICC 15-degree limit. Highly recommend video review of the arm action.")
+        elif elbow_angle > 10.0:
+            insights.append(f"OBSERVATION: Slight arm bend detected ({elbow_angle:.1f}°). Action is legal, but monitor for fatigue-induced extension.")
+        else:
+            insights.append("EXCELLENT: High-arm action maintained within legal biomechanical limits.")
+            
+        # Velocity Logic (Bowling Only)
+        if ball_speed > 140.0:
+            insights.append(f"ELITE PACE: Consistent delivery at {ball_speed:.1f} KPH. Focus on maintaining landing stability at this intensity.")
+        elif ball_speed > 120.0:
+            insights.append(f"GOOD MOMENTUM: Solid medium-fast pace. To increase velocity, focus on earlier front-foot bracing.")
+        else:
+            insights.append(f"TECHNICAL FOCUS: Current pace is {ball_speed:.1f} KPH. Work on shoulder rotation and follow-through to generate more zip.")
 
-    # Batting Logic
-    if shot_type and shot_type != "Unknown":
-        insights.append(f"BATTING ANALYSIS: {shot_type} detected. Analyze the bat-face angle at the point of contact to optimize power.")
+    # ROLE: BATTING INSIGHTS
+    else:
+        # Batting Shot Detection
+        if shot_type and shot_type != "Unknown":
+            insights.append(f"TECHNICAL ANALYSIS: {shot_type} detected. Focus on maintaining a high elbow and stable head position through the line of the ball.")
+        
+        # Exit Velocity (Batting only)
+        if ball_speed > 100.0:
+            insights.append(f"HIGH EXIT VELOCITY: Ball clocked at {ball_speed:.1f} KPH off the bat. Excellent timing and weight transfer.")
+        else:
+            insights.append(f"BATTING FEEDBACK: {ball_speed:.1f} KPH exit velocity. Focus on bat speed and fuller follow-through to maximize power.")
+
+        # Batting Biometrics
+        if elbow_angle > 40.0:
+            insights.append(f"BIOMETRIC ALERT: Large arm articulation ({elbow_angle:.1f}°) detected. Ensure your front elbow is pointed towards the bowler to minimize shot dispersion.")
 
     # 5. Save to Database & Update Player Stats
     from app.core.repository import PlayerRepository, AnalysisRepository
@@ -199,6 +214,10 @@ async def upload_training_session(
         "video_session_id": static_filename,
         "player_id": player_id,
         "metrics": analysis_data["metrics"],
+        "speed_kph": round(ball_speed, 2),
+        "elbow_extension": round(elbow_angle, 2),
+        "shot_type": shot_type,
+        "is_batting": is_batting,
         "coaching_insights": insights,
         "annotated_video_url": annotated_video_url,
         "models_used": ["skeleton_expert.pt", "ball_tracker.pt", "batting_classifier.pt"]

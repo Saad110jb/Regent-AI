@@ -35,3 +35,9 @@ runs/
 .DS_Store
 Thumbs.db
 *.log
+
+# Neural Assets (Generated per session)
+ai_engine/temp_uploads/
+backend/static/*.mp4
+backend/static/*.png
+!backend/static/.gitkeep
