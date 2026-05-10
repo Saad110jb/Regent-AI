@@ -20,45 +20,32 @@ The heart of the application. It allows coaches to upload or record footage whic
 *   **Keypoint Extraction:** Maps the skeletal structure of the athlete to identify technical flaws in real-time.
 *   **Kinetic Calculation:** Calculates the exit velocity of the ball and the release speed of the bowler using Euclidean distance mapping.
 
-### 2. 🛡️ Advanced Security & Multi-Factor Auth
-A military-grade security layer ensuring that elite performance data remains confidential.
-*   **2FA (Two-Factor Authentication):** Integrated TOTP (Time-based One-Time Password) support for secure coach access.
-*   **Audit Logging:** Comprehensive tracking of every login, IP address, and security event within the system.
-*   **JWT Neural Tokens:** Every API request is secured with JSON Web Tokens, enforcing role-based access control.
-
-### 3. 💳 Subscription & Tiered Access
-A robust membership engine designed to scale from local clubs to international academies.
-*   **Tiered Membership:** Basic, Pro, and Elite tiers providing varying levels of neural analysis depth.
-*   **Payment Ledger:** Integrated transaction logging for secure subscription management.
-
-### 4. 📊 Coach Dashboard (The Command Center)
+### 2. 📊 Coach Dashboard (The Command Center)
 A high-fidelity overview of the entire squad's health and performance.
 *   **New AI Session:** Quick access to initiate neural analysis on new footage.
 *   **Top Performers:** A live leaderboard ranking the "Operatives" by their recent performance metrics.
 *   **Squad Overview:** A summary of win/loss records and overall team "Neural Health."
 
-### 5. 👥 Squad Management & Recruitment
+### 3. 👥 Squad Management & Recruitment
 A sophisticated, invite-only system for building elite cricket teams.
 *   **Initialize Squad:** Coaches can define their team's identity, location, and tactical focus.
 *   **Recruitment Matrix:** A live tracking system for pending invitations. Coaches can invite players by ID and revoke invitations instantly if recruitment targets shift.
+*   **Leadership Assignment:** Designated roles for **Captains** and **Vice-Captains** to manage on-field communication.
 
-### 6. 🛠️ Operative Modification (Advanced Player Profiles)
+### 4. 🛠️ Operative Modification (Advanced Player Profiles)
 Detailed technical profiles for every player in the squad.
 *   **Batting Matrix:** Tracking runs, strike rates, and technical shot breakdown.
 *   **Ballistic Metrics:** Monitoring "MAX KPH" (release speed) and delivery consistency.
-*   **Physics Smoothing:** Integrated temporal filtering to eliminate keypoint jitter and provide stable biomechanical readings.
+*   **Encrypted Data:** Every operative's performance history is securely logged for long-term development tracking.
 
-### 7. 💬 Squad Comms (Encrypted Neural Channel)
+### 5. 💬 Squad Comms (Encrypted Neural Channel)
 A dedicated, high-security communication terminal for team tactical discussions.
 *   **Encrypted Messaging:** Secure channel for coaches to share technical feedback and "Tactical Documents" (PDFs).
+*   **Coach Access Badge:** Verified badges for team leadership to maintain command authority.
 
----
-
-## ⚙️ The Physics Engine: ICC-Compliant Logic
-Our backend includes a custom physics engine designed for high-stakes accuracy.
-*   **Parallax Correction:** Advanced math to compensate for camera angles (Side-on vs. Front-on) during elbow extension analysis.
-*   **Percentile Filtering:** Using 90th/10th percentile ranges to provide robust extension readings that ignore video noise.
-*   **ICC 15° Rule Support:** Automated flagging of deliveries that exceed the legal extension limits.
+### 6. 🧠 Neural Briefings
+AI-generated reports that synthesize days of training into actionable summaries.
+*   **Tactical Insights:** The AI analyzes squad-wide trends and alerts the coach to declining performance or potential injury risks based on kinetic data.
 
 ---
 
@@ -84,14 +71,25 @@ Our analysis engine is powered by four specialized **YOLO11** models:
 
 ---
 
+## 🚀 Technical Stack
+
+*   **Vision Engine:** YOLO11 (Pose, Detect, and Classify)
+*   **Backend:** FastAPI (Python)
+*   **Mobile Framework:** React Native (Expo)
+*   **Data Lake:** MongoDB (Neural sessions and squad telemetry)
+
+---
+
 ## 📂 Project Structure
 
 ```bash
 ├── ai_engine/       # YOLO11 Expert training scripts and model weights
-├── backend/         # FastAPI recruitment, security, and telemetry API
+├── backend/         # FastAPI recruitment and telemetry API
 └── mobile_app/      # React Native futuristic coach terminal
 ```
 
 ---
+
+#
 
 © 2026 THE REGENTS | ADVANCED NEURAL RECRUITMENT

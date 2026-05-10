@@ -11,13 +11,15 @@ from bson import ObjectId
 
 router = APIRouter(prefix="/analysis", tags=["AI Analysis Engine"])
 
-# Configuration - Using Absolute Paths for cross-service reliability
-# Path logic: d:/Regents_AI/backend/app/api/analysis.py -> 4 levels up to d:/Regents_AI
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 TEMP_UPLOAD_DIR = os.path.join(BASE_DIR, "ai_engine", "temp_uploads")
 STATIC_DIR = os.path.join(BASE_DIR, "backend", "static")
 os.makedirs(TEMP_UPLOAD_DIR, exist_ok=True)
 os.makedirs(STATIC_DIR, exist_ok=True)
+
+# AI Engine Configuration (Hugging Face)
+ENGINE_URL = "https://regentai-regents-ai.hf.space/process-video"
+ENGINE_BASE_URL = "https://regentai-regents-ai.hf.space"
 
 @router.post("/upload-session")
 async def upload_training_session(
@@ -55,31 +57,27 @@ async def upload_training_session(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Filesystem error: {str(e)}")
 
-    # 2. Forward to AI Engine Worker (Port 8001)
+    # 2. Forward to AI Engine Worker (Hugging Face)
     try:
         async with httpx.AsyncClient(timeout=300.0) as client:
             files = {'file': (file.filename, file.file, file.content_type)}
-            engine_response = await client.post(
-                f"http://localhost:8001/process-video",
-                files=files
-            )
+            engine_response = await client.post(ENGINE_URL, files=files)
             
             if engine_response.status_code != 200:
-                raise HTTPException(status_code=500, detail="AI Engine failed to process video.")
+                raise HTTPException(status_code=500, detail=f"AI Engine failed: {engine_response.text}")
             
-            ai_results = engine_response.json()
+            full_response = engine_response.json()
+            ai_results = full_response.get("results", {})
             
-            # Extract metrics from AI Engine
+            # Extract metrics
             ball_speed = ai_results.get("speed_kph", 0)
             elbow_angle = ai_results.get("elbow_extension", 0)
             shot_type = ai_results.get("shot_type", "Unknown")
-            annotated_video_path = ai_results.get("annotated_video")
+            remote_video_rel_path = ai_results.get("annotated_video_url")
             
-            # 3. Move Annotated Video to Static folder
-            # Fetch Player name for naming
+            # 3. Download Annotated Video from remote engine
             player_doc = await db_instance.db.players.find_one({"_id": player_id if isinstance(player_id, ObjectId) else ObjectId(player_id)})
             if not player_doc:
-                # Try user_id lookup if player_id is actually a user_id
                 player_doc = await db_instance.db.players.find_one({"user_id": player_id})
             
             player_name = "Unknown_Player"
@@ -90,16 +88,20 @@ async def upload_training_session(
 
             static_filename = f"processed_{player_name}_{player_id}_{uuid.uuid4().hex[:8]}.mp4"
             target_static_path = os.path.join(STATIC_DIR, static_filename)
+
+            if remote_video_rel_path:
+                video_url = f"{ENGINE_BASE_URL}/{remote_video_rel_path}"
+                print(f"DEBUG: Downloading annotated video from {video_url}")
+                video_download_res = await client.get(video_url)
+                if video_download_res.status_code == 200:
+                    with open(target_static_path, "wb") as f:
+                        f.write(video_download_res.content)
+                    print(f"DEBUG: Successfully saved to {target_static_path}")
+                else:
+                    print(f"ERROR: Failed to download video from engine: {video_download_res.status_code}")
             
-            print(f"DEBUG: AI Engine returned path: {annotated_video_path}")
-            if annotated_video_path and os.path.exists(annotated_video_path):
-                shutil.copy(annotated_video_path, target_static_path)
-                print(f"DEBUG: Successfully copied to {target_static_path}")
-            else:
-                print(f"ERROR: Annotated video NOT FOUND at {annotated_video_path}")
-                # We can still proceed but with the raw video if needed, 
-                # but better to alert the engine failure
-            
+            # Use the local backend URL for the mobile app to play the video
+            # In production, replace localhost with your actual backend domain
             annotated_video_url = f"http://localhost:8002/static/{static_filename}"
 
     except Exception as e:
